@@ -16,8 +16,9 @@
 MAKEFLAGS+=--warn-undefined-variables
 
 export OPENLANE_RUN_TAG = $(shell date '+%y_%m_%d_%H_%M')
-OPENLANE_TAG ?= 2021.11.23_01.42.34
-OPENLANE_IMAGE_NAME ?= efabless/openlane:$(OPENLANE_TAG)
+OPENLANE_TAG ?= b6bacc9d1ab469917fda7ceea61ea3a18984b818-amd64
+OPENLANE_IMAGE_NAME ?= efabless/openlane:b6bacc9d1ab469917fda7ceea61ea3a18984b818-amd64
+#:$(OPENLANE_TAG)
 designs = $(shell find * -maxdepth 0 -type d)
 current_design = null
 

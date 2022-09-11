@@ -1,5 +1,24 @@
-# Caravel user project includes
--v $(USER_PROJECT_VERILOG)/rtl/user_project_wrapper.v	     
--v $(USER_PROJECT_VERILOG)/rtl/user_proj_example.v
+# Caravel user project includes	     
+-v $(USER_PROJECT_VERILOG)/rtl/user_project_wrapper.v
+-v $(USER_PROJECT_VERILOG)/rtl/soomrv.v
+-v $(USER_PROJECT_VERILOG)/rtl/Core.v
+-v $(USER_PROJECT_VERILOG)/rtl/InstrDecoder.v
+-v $(USER_PROJECT_VERILOG)/rtl/IntALU.v
+-v $(USER_PROJECT_VERILOG)/rtl/Load.v
+-v $(USER_PROJECT_VERILOG)/rtl/AGU.v
+-v $(USER_PROJECT_VERILOG)/rtl/ProgramCounter.v
+-v $(USER_PROJECT_VERILOG)/rtl/Rename.v
+-v $(USER_PROJECT_VERILOG)/rtl/ReservationStation.v
+-v $(USER_PROJECT_VERILOG)/rtl/RF.v
+-v $(USER_PROJECT_VERILOG)/rtl/ROB.v
+-v $(USER_PROJECT_VERILOG)/rtl/BranchPredictor.v
+-v $(USER_PROJECT_VERILOG)/rtl/LoadBuffer.v
+-v $(USER_PROJECT_VERILOG)/rtl/StoreQueue.v
+-v $(USER_PROJECT_VERILOG)/rtl/MultiplySmall.v
+-v $(USER_PROJECT_VERILOG)/rtl/Divide.v
+-v $(USER_PROJECT_VERILOG)/rtl/ControlRegs.v
+-v $(USER_PROJECT_VERILOG)/rtl/PopCnt.v
+-v $(USER_PROJECT_VERILOG)/rtl/LZCnt.v
+-v $(USER_PROJECT_VERILOG)/rtl/sky130_sram_1kbyte_1rw1r_32x256_8.v
+-v $(USER_PROJECT_VERILOG)/rtl/sky130_sram_2kbyte_1rw1r_32x512_8_2.v
 
- 
