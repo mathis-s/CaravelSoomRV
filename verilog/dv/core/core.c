@@ -134,7 +134,7 @@ void main()
     *((volatile uint32_t*)0x3002000c) = 0x00100073;*/
 
     // Write test string
-    const char* string = "string with len 18";
+    const char* string = "string with len 20  ";
     volatile char* pointerC = (volatile char*)0x30010004;
 
     while (*string != 0)
@@ -154,6 +154,6 @@ void main()
     uint32_t result = *((volatile char*)0x30010004);
 
     // Flag Successful Test if correct
-    if (result == 18)
+    if (result == 20)
         reg_mprj_datal = 0xAB610000;
 }

@@ -172,6 +172,9 @@ module StoreQueue (
 			OUT_maxStoreSqN <= (baseIndex + NUM_ENTRIES[5:0]) - 1;
 		end
 		else begin
+			for (i = 0; i < NUM_ENTRIES; i = i + 1)
+				if ($signed(IN_curSqN - entries[i][71-:6]) > 0)
+					entries[i][72] <= 1;
 			if (doingDequeue) begin
 				for (i = 0; i < (NUM_ENTRIES - 1); i = i + 1)
 					entries[i] <= entries[i + 1];
@@ -181,14 +184,11 @@ module StoreQueue (
 			end
 			else if (IN_branch[51]) begin
 				for (i = 0; i < NUM_ENTRIES; i = i + 1)
-					if ($signed(entries[i][71-:6] - IN_branch[18-:6]) > 0)
+					if (($signed(entries[i][71-:6] - IN_branch[18-:6]) > 0) && !entries[i][72])
 						entries[i][73] <= 0;
 				if (IN_branch[0])
 					baseIndex = IN_branch[12-:6] + 1;
 			end
-			for (i = 0; i < NUM_ENTRIES; i = i + 1)
-				if ($signed(IN_curSqN - entries[i][71-:6]) > 0)
-					entries[i][72] <= 1;
 			for (i = 0; i < NUM_PORTS; i = i + 1)
 				if (((IN_uop[i * 137] && !IN_uop[(i * 137) + 63]) && (!IN_branch[51] || ($signed(IN_uop[(i * 137) + 19-:6] - IN_branch[18-:6]) <= 0))) && !IN_uop[(i * 137) + 1]) begin : sv2v_autoblock_3
 					reg [2:0] index;

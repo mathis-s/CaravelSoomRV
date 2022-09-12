@@ -391,7 +391,7 @@ module Core (
 	);
 	assign wbUOp[0+:92] = (INT0_uop[0] ? INT0_uop : DIV_uop);
 	wire [136:0] AGU_uop;
-	wire [83:0] AGU_mapping;
+	wire [335:0] AGU_mapping;
 	AGU agu(
 		.clk(clk),
 		.rst(rst),
@@ -524,7 +524,7 @@ module Core (
 		.IN_ce(CSR_ce[0]),
 		.IN_we(OUT_MEM_writeEnable),
 		.IN_wm(OUT_MEM_writeMask),
-		.IN_addr(OUT_MEM_addr[5:0]),
+		.IN_addr(OUT_MEM_addr[6:0]),
 		.IN_data(OUT_MEM_writeData),
 		.OUT_data(CSR_dataOut[0+:32]),
 		.IN_comValid(comValid),

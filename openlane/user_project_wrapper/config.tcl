@@ -66,7 +66,8 @@ set ::env(CLOCK_PERIOD) "20"
 ## Internal Macros
 ### Macro PDN Connections
 set ::env(FP_PDN_MACRO_HOOKS) "\
-    ram vccd1 vssd1 vccd1 vssd1,\
+    ram0 vccd1 vssd1 vccd1 vssd1,\
+    ram1 vccd1 vssd1 vccd1 vssd1,\
     pram0 vccd1 vssd1 vccd1 vssd1,\
     pram1 vccd1 vssd1 vccd1 vssd1"
 
@@ -76,24 +77,22 @@ set ::env(MACRO_PLACEMENT_CFG) "$script_dir/../../macro.cfg"
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
-    $::env(PDK_ROOT)/sky130B/libs.ref/sky130_sram_macros/verilog/sky130_sram_2kbyte_1rw1r_32x512_8.v"
-	#/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw1r_32x2048_8/sky130_sram_8kbyte_1rw1r_32x2048_8.v \
-    #/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw_64x1024_8/sky130_sram_8kbyte_1rw_64x1024_8.v"
+    /home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw_64x1024_8/sky130_sram_8kbyte_1rw_64x1024_8.v"
     #$script_dir/../../../../verilog/rtl/soomrv.v \
+    #$::env(PDK_ROOT)/sky130B/libs.ref/sky130_sram_macros/verilog/sky130_sram_2kbyte_1rw1r_32x512_8.v"
+    #/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw1r_32x2048_8/sky130_sram_8kbyte_1rw1r_32x2048_8.v
 
 set ::env(EXTRA_LEFS) "\
-	$script_dir/../../../../lef/soomrv.lef \
-    $::env(PDK_ROOT)/sky130B/libs.ref/sky130_sram_macros/lef/sky130_sram_2kbyte_1rw1r_32x512_8.lef"
-	#/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw1r_32x2048_8/sky130_sram_8kbyte_1rw1r_32x2048_8.lef \
-    #/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw_64x1024_8/sky130_sram_8kbyte_1rw_64x1024_8.lef"
+    /home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw_64x1024_8/sky130_sram_8kbyte_1rw_64x1024_8.lef"
+    #$::env(PDK_ROOT)/sky130B/libs.ref/sky130_sram_macros/lef/sky130_sram_2kbyte_1rw1r_32x512_8.lef"
+    #/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw1r_32x2048_8/sky130_sram_8kbyte_1rw1r_32x2048_8.lef \
 
 set ::env(EXTRA_GDS_FILES) "\
-	$script_dir/../../../../gds/soomrv.gds \
-    $::env(PDK_ROOT)/sky130B/libs.ref/sky130_sram_macros/gds/sky130_sram_2kbyte_1rw1r_32x512_8.gds"
-	#"/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw1r_32x2048_8/sky130_sram_8kbyte_1rw1r_32x2048_8.gds
-	#/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw_64x1024_8/sky130_sram_8kbyte_1rw_64x1024_8.gds"
+	/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw_64x1024_8/sky130_sram_8kbyte_1rw_64x1024_8.gds"
+    #$::env(PDK_ROOT)/sky130B/libs.ref/sky130_sram_macros/gds/sky130_sram_2kbyte_1rw1r_32x512_8.gds"
+    #/home/m/Builds/sky130_sram_macros/sky130_sram_8kbyte_1rw1r_32x2048_8/sky130_sram_8kbyte_1rw1r_32x2048_8.gds
 
-set ::env(GRT_OVERFLOW_ITERS) 400
+set ::env(GRT_OVERFLOW_ITERS) 600
 
 # set ::env(GLB_RT_MAXLAYER) 5
 set ::env(RT_MAX_LAYER) {met4}

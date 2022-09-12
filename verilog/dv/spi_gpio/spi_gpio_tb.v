@@ -179,8 +179,6 @@ module spi_gpio_tb;
             $write("%c", spiByte);
             spiCnt = 0;
         end
-        
-
     end
 
 	initial begin

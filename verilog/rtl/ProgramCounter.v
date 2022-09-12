@@ -60,7 +60,7 @@ module ProgramCounter (
 		OUT_instr[0+:32] = IN_instr[31:0];
 		OUT_instr[32+:32] = IN_instr[63:32];
 	end
-	assign OUT_instrMappingMiss = (pc[30:12] != IN_instrMappingBase[31:13]) || (IN_instrMappingHalfSize && (pc[11] != IN_instrMappingBase[12]));
+	assign OUT_instrMappingMiss = (pc[30:13] != IN_instrMappingBase[31:14]) || (IN_instrMappingHalfSize && (pc[12] != IN_instrMappingBase[13]));
 	always @(posedge clk)
 		if (rst)
 			pc <= 0;

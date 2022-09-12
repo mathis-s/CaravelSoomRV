@@ -48,15 +48,68 @@ module ReservationStation (
 	reg [32:0] reservedWBs [NUM_UOPS - 1:0];
 	always @(*)
 		for (i = NUM_UOPS - 1; i >= 0; i = i - 1)
-			begin
-				deqValid[i] = 0;
+			begin : sv2v_autoblock_1
+				reg [2:0] ids0 [7:0];
+				reg [5:0] sqns0 [7:0];
+				reg valid0 [7:0];
+				reg [2:0] ids1 [3:0];
+				reg [5:0] sqns1 [3:0];
+				reg valid1 [3:0];
+				reg [2:0] ids2 [1:0];
+				reg [5:0] sqns2 [1:0];
+				reg valid2 [1:0];
+				deqValid[i] = 1'b0;
 				deqIndex[i] = 3'bxxx;
 				for (j = 0; j < QUEUE_SIZE; j = j + 1)
-					if (queueInfo[j][0] && (!deqValid[1] || (deqIndex[1] != j[2:0])))
-						if ((((((((((((queue[j][59] || (IN_resultValid[0] && (IN_resultUOp[59-:6] == queue[j][58-:6]))) || (IN_resultValid[1] && (IN_resultUOp[151-:6] == queue[j][58-:6]))) || (IN_resultValid[2] && (IN_resultUOp[243-:6] == queue[j][58-:6]))) || (((OUT_valid[0] && (OUT_uop[31-:5] != 0)) && (OUT_uop[37-:6] == queue[j][58-:6])) && (OUT_uop[1-:2] == 2'd0))) || (((OUT_valid[1] && (OUT_uop[155-:5] != 0)) && (OUT_uop[161-:6] == queue[j][58-:6])) && (OUT_uop[125-:2] == 2'd0))) && (((((queue[j][52] || (IN_resultValid[0] && (IN_resultUOp[59-:6] == queue[j][51-:6]))) || (IN_resultValid[1] && (IN_resultUOp[151-:6] == queue[j][51-:6]))) || (IN_resultValid[2] && (IN_resultUOp[243-:6] == queue[j][51-:6]))) || (((OUT_valid[0] && (OUT_uop[31-:5] != 0)) && (OUT_uop[37-:6] == queue[j][51-:6])) && (OUT_uop[1-:2] == 2'd0))) || (((OUT_valid[1] && (OUT_uop[155-:5] != 0)) && (OUT_uop[161-:6] == queue[j][51-:6])) && (OUT_uop[125-:2] == 2'd0)))) && ((i == 0) || ((!queueInfo[j][2] && !queueInfo[j][3]) && (queue[j][1-:2] != 2'd3)))) && ((i == 1) || (queue[j][1-:2] != 2'd2))) && (!IN_DIV_doNotIssue || (queue[j][1-:2] != 2'd3))) && (!IN_MUL_doNotIssue || (queue[j][1-:2] != 2'd2))) && (!queueInfo[j][4] || (i == 1))) && ((queue[j][1-:2] != 2'd0) || !reservedWBs[i][0])) begin
-							deqValid[i] = 1;
-							deqIndex[i] = j[2:0];
-						end
+					begin
+						ids0[j] = j[2:0];
+						sqns0[j] = queue[j][43-:6];
+						valid0[j] = 0;
+						if (queueInfo[j][0] && (!deqValid[1] || (deqIndex[1] != j[2:0])))
+							if ((((((((((((queue[j][59] || (IN_resultValid[0] && (IN_resultUOp[59-:6] == queue[j][58-:6]))) || (IN_resultValid[1] && (IN_resultUOp[151-:6] == queue[j][58-:6]))) || (IN_resultValid[2] && (IN_resultUOp[243-:6] == queue[j][58-:6]))) || (((OUT_valid[0] && (OUT_uop[31-:5] != 0)) && (OUT_uop[37-:6] == queue[j][58-:6])) && (OUT_uop[1-:2] == 2'd0))) || (((OUT_valid[1] && (OUT_uop[155-:5] != 0)) && (OUT_uop[161-:6] == queue[j][58-:6])) && (OUT_uop[125-:2] == 2'd0))) && (((((queue[j][52] || (IN_resultValid[0] && (IN_resultUOp[59-:6] == queue[j][51-:6]))) || (IN_resultValid[1] && (IN_resultUOp[151-:6] == queue[j][51-:6]))) || (IN_resultValid[2] && (IN_resultUOp[243-:6] == queue[j][51-:6]))) || (((OUT_valid[0] && (OUT_uop[31-:5] != 0)) && (OUT_uop[37-:6] == queue[j][51-:6])) && (OUT_uop[1-:2] == 2'd0))) || (((OUT_valid[1] && (OUT_uop[155-:5] != 0)) && (OUT_uop[161-:6] == queue[j][51-:6])) && (OUT_uop[125-:2] == 2'd0)))) && ((i == 0) || ((!queueInfo[j][2] && !queueInfo[j][3]) && (queue[j][1-:2] != 2'd3)))) && ((i == 1) || (queue[j][1-:2] != 2'd2))) && (!IN_DIV_doNotIssue || (queue[j][1-:2] != 2'd3))) && (!IN_MUL_doNotIssue || (queue[j][1-:2] != 2'd2))) && (!queueInfo[j][4] || (i == 1))) && ((queue[j][1-:2] != 2'd0) || !reservedWBs[i][0]))
+								valid0[j] = 1;
+					end
+				for (j = 0; j < 4; j = j + 1)
+					if (valid0[2 * j] && (!valid0[(2 * j) + 1] || ($signed(sqns0[2 * j] - sqns0[(2 * j) + 1]) < 0))) begin
+						valid1[j] = 1;
+						ids1[j] = ids0[2 * j];
+						sqns1[j] = sqns0[2 * j];
+					end
+					else if (valid0[(2 * j) + 1]) begin
+						valid1[j] = 1;
+						ids1[j] = ids0[(2 * j) + 1];
+						sqns1[j] = sqns0[(2 * j) + 1];
+					end
+					else begin
+						valid1[j] = 0;
+						ids1[j] = 3'bxxx;
+						sqns1[j] = 6'bxxxxxx;
+					end
+				for (j = 0; j < 2; j = j + 1)
+					if (valid1[2 * j] && (!valid1[(2 * j) + 1] || ($signed(sqns1[2 * j] - sqns1[(2 * j) + 1]) < 0))) begin
+						valid2[j] = 1;
+						ids2[j] = ids1[2 * j];
+						sqns2[j] = sqns1[2 * j];
+					end
+					else if (valid1[(2 * j) + 1]) begin
+						valid2[j] = 1;
+						ids2[j] = ids1[(2 * j) + 1];
+						sqns2[j] = sqns1[(2 * j) + 1];
+					end
+					else begin
+						valid2[j] = 0;
+						ids2[j] = 3'bxxx;
+						sqns2[j] = 6'bxxxxxx;
+					end
+				for (j = 0; j < 1; j = j + 1)
+					if (valid2[2 * j] && (!valid2[(2 * j) + 1] || ($signed(sqns2[2 * j] - sqns2[(2 * j) + 1]) < 0))) begin
+						deqValid[i] = 1;
+						deqIndex[i] = ids2[2 * j];
+					end
+					else if (valid2[(2 * j) + 1]) begin
+						deqValid[i] = 1;
+						deqIndex[i] = ids2[(2 * j) + 1];
+					end
 			end
 	reg [2:0] insertIndex [NUM_UOPS - 1:0];
 	reg insertAvail [NUM_UOPS - 1:0];
@@ -127,7 +180,7 @@ module ReservationStation (
 					else
 						OUT_valid[i] <= 0;
 			for (i = 0; i < NUM_UOPS; i = i + 1)
-				if (frontEn && IN_uopValid[i]) begin : sv2v_autoblock_1
+				if (frontEn && IN_uopValid[i]) begin : sv2v_autoblock_2
 					reg [123:0] temp;
 					temp = IN_uop[i * 124+:124];
 					for (k = 0; k < RESULT_BUS_COUNT; k = k + 1)

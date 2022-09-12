@@ -19,4 +19,4 @@ and also supports speculative execution and precise exceptions.
 
 ## Repo
 The Verilog source files can be found in `verilog/rtl`. These are converted from SystemVerilog via zachjs' [sv2v](https://github.com/zachjs/sv2v),
-the original SystemVerilog source code is available [here](www.github.com).
+the original SystemVerilog source code is available [here](https://github.com/git-mathis/SoomRV).

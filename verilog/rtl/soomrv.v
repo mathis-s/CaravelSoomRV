@@ -48,23 +48,19 @@ module soomrv #(
     
     input wire user_clock2,
     
-    output wire[8:0] mem_addr,
+    output wire[11:0] mem_addr,
     output wire[31:0] mem_dataOut,
     input wire[31:0] mem_dataIn,
     output wire[3:0] mem_wm,
     output wire mem_we,
     output wire mem_ce,
 
-    output wire[8:0] instr_addr,
+    output wire[10:0] instr_addr,
     input wire[63:0] instr_dataIn,
+    output wire[63:0] instr_dataOut,
     output wire instr_ce,
-
-    output wire[8:0] instrMgmt_addr,
-    input wire[63:0] instrMgmt_dataIn,
-    output wire[63:0] instrMgmt_dataOut,
-    output wire instrMgmt_ce,
-    output wire instrMgmt_we,
-    output wire[7:0] instrMgmt_wm,
+    output wire instr_we,
+    output wire[7:0] instr_wm,
 
     output wire zero,
 
@@ -115,7 +111,7 @@ module soomrv #(
     reg MGMT_sramWE;
     reg MGMT_sramCE;
 
-    assign mem_addr = !usingDataRAM ? CORE_sramAddr[8:0] : MGMT_sramAddr[8:0];
+    assign mem_addr = !usingDataRAM ? CORE_sramAddr[11:0] : MGMT_sramAddr[11:0];
     assign mem_dataOut = !usingDataRAM ? CORE_sramData : MGMT_sramData;
     assign mem_wm = !usingDataRAM ? CORE_sramWM : MGMT_sramWM;
     assign mem_we = !usingDataRAM ? CORE_sramWE : MGMT_sramWE;
@@ -131,14 +127,11 @@ module soomrv #(
     reg MGMT_pramWE;
     reg MGMT_pramCE;
 
-    assign instr_addr = CORE_pramAddr[8:0];
-    assign instr_ce = CORE_pramCE;
-
-    assign instrMgmt_addr = MGMT_pramAddr[8:0];
-    assign instrMgmt_dataOut = MGMT_pramData;
-    assign instrMgmt_wm = MGMT_pramWM;
-    assign instrMgmt_ce = MGMT_pramCE;
-    assign instrMgmt_we = MGMT_pramWE;
+    assign instr_addr = coreEn ? CORE_pramAddr[10:0] : MGMT_pramAddr[10:0];
+    assign instr_dataOut = MGMT_pramData;
+    assign instr_wm = MGMT_pramWM;
+    assign instr_ce = coreEn ? CORE_pramCE : MGMT_pramCE;
+    assign instr_we = coreEn ? 1'b1 : MGMT_pramWE;
 
     // Wishbone State
     reg sramRead;
@@ -149,12 +142,10 @@ module soomrv #(
     // SRAM macros output on falling,
     // sample on rising for clean signal
     reg[63:0] instr_dataInSample;
-    reg[63:0] instrMgmt_dataInSample;
     reg[31:0] mem_dataInSample;
     reg instr_ceSample;
-    reg instrMgmt_ceSample;
     reg mem_ceSample;
-    reg instrMgmt_weSample;
+    reg instr_weSample;
     reg mem_weSample;
     
     always@(posedge wb_clk_i) begin
@@ -162,16 +153,15 @@ module soomrv #(
         if (!instr_ceSample)
             instr_dataInSample <= instr_dataIn;
 
-        if (!instrMgmt_ceSample && instrMgmt_weSample)
-            instrMgmt_dataInSample <= instrMgmt_dataIn;
+        if (!instr_ceSample && instr_weSample)
+            instr_dataInSample <= instr_dataIn;
 
         if (!mem_ceSample && mem_weSample)
             mem_dataInSample <= mem_dataIn;
 
         instr_ceSample <= instr_ce;
-        instrMgmt_ceSample <= instrMgmt_ce;
         mem_ceSample <= mem_ce;
-        instrMgmt_weSample <= instrMgmt_we;
+        instr_weSample <= instr_we;
         mem_weSample <= mem_we;
     end
 
@@ -202,7 +192,7 @@ module soomrv #(
             if (readCnt)
                 readCnt <= 0;
             else begin
-                wbs_dat_o <= mem_dataInSample;
+                wbs_dat_o <= mem_dataIn;
                 wbs_ack_o <= 1;
                 sramRead <= 0;
             end
@@ -211,7 +201,7 @@ module soomrv #(
             if (readCnt)
                 readCnt <= 0;
             else begin
-                wbs_dat_o <= pramReadUpper ? instrMgmt_dataInSample[63:32] : instrMgmt_dataInSample[31:0];
+                wbs_dat_o <= pramReadUpper ? instr_dataIn[63:32] : instr_dataIn[31:0];
                 wbs_ack_o <= 1;
                 pramRead <= 0;
             end
@@ -276,7 +266,7 @@ module soomrv #(
             end
 
             // Program SRAM access
-            else if (wbs_adr_i[19:16] == 4'h2) begin
+            else if (!coreEn && wbs_adr_i[19:16] == 4'h2) begin
                 if (wbs_we_i) begin
                     MGMT_pramAddr <= {9'b0, wbs_adr_i[23:3]};
                     MGMT_pramCE <= 0;

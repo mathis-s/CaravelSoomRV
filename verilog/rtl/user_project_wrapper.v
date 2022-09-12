@@ -82,23 +82,19 @@ module user_project_wrapper #(
 /* User project is instantiated  here   */
 /*--------------------------------------*/
 
-wire[8:0] mem_addr;
+wire[11:0] mem_addr;
 wire[31:0] mem_dataOut;
 wire[31:0] mem_dataIn;
 wire[3:0] mem_wm;
 wire mem_we;
 wire mem_ce;
 
-wire[8:0] instr_addr;
+wire[10:0]  instr_addr;
 wire[63:0] instr_dataIn;
-wire instr_ce;
-
-wire[8:0]  instrMgmt_addr;
-wire[63:0] instrMgmt_dataIn;
-wire[63:0] instrMgmt_dataOut;
-wire  instrMgmt_ce;
-wire       instrMgmt_we;
-wire[7:0]  instrMgmt_wm;
+wire[63:0] instr_dataOut;
+wire  instr_ce;
+wire       instr_we;
+wire[7:0]  instr_wm;
 
 wire zero;
 
@@ -147,14 +143,10 @@ soomrv mprj (
 
     .instr_addr(instr_addr),
     .instr_dataIn(instr_dataIn),
+    .instr_dataOut(instr_dataOut),
     .instr_ce(instr_ce),
-
-    .instrMgmt_addr(instrMgmt_addr),
-    .instrMgmt_dataIn(instrMgmt_dataIn),
-    .instrMgmt_dataOut(instrMgmt_dataOut),
-    .instrMgmt_ce(instrMgmt_ce),
-    .instrMgmt_we(instrMgmt_we),
-    .instrMgmt_wm(instrMgmt_wm),
+    .instr_we(instr_we),
+    .instr_wm(instr_wm),
 
     .zero(zero),
 
@@ -163,81 +155,81 @@ soomrv mprj (
 );
 
 // Data SRAM
-/*sky130_sram_8kbyte_1rw1r_32x2048_8 ram
-(
-    .clk0(wb_clk_i),
-    .csb0(mem_ce),
-    .web0(mem_we),
-    .wmask0(mem_wm),
-    .addr0(mem_addr[10:0]),
-    .din0(mem_dataOut),
-    .dout0(mem_dataIn),
-    
-    .clk1(wb_clk_i),
-    .csb1(mem_ce),
-    .addr1(mem_addr[10:0]),
-    .dout1()
-);
 
-wire notConnected;
-sky130_sram_8kbyte_1rw_64x1024_8 pram
+wire[63:0] instrDataIn0;
+wire[63:0] instrDataIn1;
+
+reg instrAddr10;
+always@(posedge wb_clk_i) begin
+    instrAddr10 <= instr_addr[10];
+end
+
+assign instr_dataIn = instrAddr10 ? instrDataIn1 : instrDataIn0;
+
+wire unused2;
+wire unused3;
+sky130_sram_8kbyte_1rw_64x1024_8 pram0
 (
     .clk0(wb_clk_i),
-    .csb0(instr_ce),
+    .csb0(!(!instr_ce && !instr_addr[10])),
     .web0(instr_we),
     .wmask0(instr_wm),
-    .spare_wen0(instr_wm[7]),
-    .addr0(instr_addr[10:0]),
-    .din0({instr_dataOut[63], instr_dataOut[63:0]}),
-    .dout0({notConnected, instr_dataIn[63:0]}),
-);*/
-
-sky130_sram_2kbyte_1rw1r_32x512_8 pram0
-(
-    .clk0(wb_clk_i),
-    .csb0(instrMgmt_ce),
-    .web0(instrMgmt_we),
-    .wmask0(instrMgmt_wm[3:0]),
-    .addr0(instrMgmt_addr[8:0]),
-    .din0(instrMgmt_dataOut[31:0]),
-    .dout0(instrMgmt_dataIn[31:0]),
-    
-    .clk1(wb_clk_i),
-    .csb1(instr_ce),
-    .addr1(instr_addr[8:0]),
-    .dout1(instr_dataIn[31:0])
+    .spare_wen0(1'b0),
+    .addr0({1'b0, instr_addr[9:0]}),
+    .din0({1'b0, instr_dataOut}),
+    .dout0({unused2, instrDataIn0})
 );
 
-sky130_sram_2kbyte_1rw1r_32x512_8 pram1
+sky130_sram_8kbyte_1rw_64x1024_8 pram1
 (
     .clk0(wb_clk_i),
-    .csb0(instrMgmt_ce),
-    .web0(instrMgmt_we),
-    .wmask0(instrMgmt_wm[7:4]),
-    .addr0(instrMgmt_addr[8:0]),
-    .din0(instrMgmt_dataOut[63:32]),
-    .dout0(instrMgmt_dataIn[63:32]),
-    
-    .clk1(wb_clk_i),
-    .csb1(instr_ce),
-    .addr1(instr_addr[8:0]),
-    .dout1(instr_dataIn[63:32])
+    .csb0(!(!instr_ce && instr_addr[10])),
+    .web0(instr_we),
+    .wmask0(instr_wm),
+    .spare_wen0(1'b0),
+    .addr0({1'b0, instr_addr[9:0]}),
+    .din0({1'b0, instr_dataOut}),
+    .dout0({unused3, instrDataIn1})
 );
 
-sky130_sram_2kbyte_1rw1r_32x512_8 ram
+wire unused0;
+wire unused1;
+wire[63:0] memDataIn64_0;
+wire[63:0] memDataIn64_1;
+
+reg memAddr0;
+reg memAddr11;
+always@(posedge wb_clk_i) begin
+    memAddr0 <= mem_addr[0];
+    memAddr11 <= mem_addr[11];
+end
+
+assign mem_dataIn = memAddr11 ? 
+    (memAddr0 ? memDataIn64_1[63:32] : memDataIn64_1[31:0]) :
+    (memAddr0 ? memDataIn64_0[63:32] : memDataIn64_0[31:0]);
+
+sky130_sram_8kbyte_1rw_64x1024_8 ram0
 (
     .clk0(wb_clk_i),
-    .csb0(mem_ce),
+    .csb0(!(!mem_ce && !mem_addr[11])),
     .web0(mem_we),
-    .wmask0(mem_wm),
-    .addr0(mem_addr[8:0]),
-    .din0(mem_dataOut),
-    .dout0(mem_dataIn),
-    
-    .clk1(zero),
-    .csb1(mem_ce),
-    .addr1(mem_addr[8:0]),
-    .dout1()
+    .wmask0(mem_addr[0] ? {mem_wm, 4'b0} : {4'b0, mem_wm}),
+    .spare_wen0(1'b0),
+    .addr0({1'b0, mem_addr[10:1]}),
+    .din0({1'b0, mem_dataOut, mem_dataOut}),
+    .dout0({unused0, memDataIn64_0})
+);
+
+sky130_sram_8kbyte_1rw_64x1024_8 ram1
+(
+    .clk0(wb_clk_i),
+    .csb0(!(!mem_ce && mem_addr[11])),
+    .web0(mem_we),
+    .wmask0(mem_addr[0] ? {mem_wm, 4'b0} : {4'b0, mem_wm}),
+    .spare_wen0(1'b0),
+    .addr0({1'b0, mem_addr[10:1]}),
+    .din0({1'b0, mem_dataOut, mem_dataOut}),
+    .dout0({unused1, memDataIn64_1})
 );
 
 endmodule	// user_project_wrapper

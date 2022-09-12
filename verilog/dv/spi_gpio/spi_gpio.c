@@ -199,6 +199,12 @@ void main()
     while (*string != 0)
         *pointerC++ = *string++;
     *pointerC = 0;
+
+    string = "0123456789abcdef";
+    pointerC = (volatile char*)(0x30010000 + 164);
+    while (*string != 0)
+        *pointerC++ = *string++;
+    *pointerC = 0;
     
     // Enable core
     reg_mprj_slave = 0b0001;

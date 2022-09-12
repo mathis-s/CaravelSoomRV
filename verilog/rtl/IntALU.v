@@ -68,6 +68,8 @@ module IntALU (
 		.a(IN_uop[170-:32]),
 		.res(resPopCnt)
 	);
+	wire lessThan = $signed(srcA) < $signed(srcB);
+	wire lessThanU = srcA < srcB;
 	always @(*) begin
 		case (IN_uop[42-:6])
 			6'd17, 6'd0: resC = srcA + srcB;
@@ -76,8 +78,8 @@ module IntALU (
 			6'd3: resC = srcA & srcB;
 			6'd4: resC = srcA << srcB[4:0];
 			6'd5: resC = srcA >> srcB[4:0];
-			6'd6: resC = {31'b0000000000000000000000000000000, $signed(srcA) < $signed(srcB)};
-			6'd7: resC = {31'b0000000000000000000000000000000, srcA < srcB};
+			6'd6: resC = {31'b0000000000000000000000000000000, lessThan};
+			6'd7: resC = {31'b0000000000000000000000000000000, lessThanU};
 			6'd8: resC = srcA - srcB;
 			6'd9: resC = srcA >>> srcB[4:0];
 			6'd16: resC = srcB;
@@ -94,6 +96,12 @@ module IntALU (
 			6'd37: resC = {16'b0000000000000000, srcA[15:0]};
 			6'd28, 6'd29: resC = {26'b00000000000000000000000000, resLzTz};
 			6'd30: resC = {26'b00000000000000000000000000, resPopCnt};
+			6'd40: resC = {{4'd8 {|srcA[31:24]}}, {4'd8 {|srcA[23:16]}}, {4'd8 {|srcA[15:8]}}, {4'd8 {|srcA[7:0]}}};
+			6'd31: resC = (lessThan ? srcB : srcA);
+			6'd32: resC = (lessThanU ? srcB : srcA);
+			6'd33: resC = (lessThan ? srcA : srcB);
+			6'd34: resC = (lessThanU ? srcA : srcB);
+			6'd41: resC = {srcA[7:0], srcA[15:8], srcA[23:16], srcA[31:24]};
 			default: resC = 'bx;
 		endcase
 		case (IN_uop[42-:6])

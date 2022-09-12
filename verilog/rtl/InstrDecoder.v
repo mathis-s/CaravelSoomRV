@@ -184,10 +184,14 @@ module InstrDecoder (
 								uop[96-:32] = {27'b000000000000000000000000000, instr[24-:5]};
 							end
 						end
-						else if ((instr[31:20] == 12'b001010000111) && (instr[14-:3] == 3'b101))
+						else if ((instr[31:20] == 12'b001010000111) && (instr[14-:3] == 3'b101)) begin
+							invalidEnc = 0;
 							uop[15-:6] = 6'd40;
-						else if ((instr[31:20] == 12'b011010011000) && (instr[14-:3] == 3'b101))
-							uop[15-:6] = 6'd40;
+						end
+						else if ((instr[31:20] == 12'b011010011000) && (instr[14-:3] == 3'b101)) begin
+							invalidEnc = 0;
+							uop[15-:6] = 6'd41;
+						end
 						if (instr[31-:7] == 7'b0100100) begin
 							if (instr[14-:3] == 3'b001) begin
 								uop[15-:6] = 6'd42;
@@ -291,18 +295,22 @@ module InstrDecoder (
 						end
 						else if (instr[31-:7] == 7'b0000101) begin
 							if (instr[14-:3] == 3'b110) begin
+								invalidEnc = 0;
 								uop[15-:6] = 6'd31;
 								uop[9-:2] = 2'd0;
 							end
 							else if (instr[14-:3] == 3'b111) begin
+								invalidEnc = 0;
 								uop[15-:6] = 6'd32;
 								uop[9-:2] = 2'd0;
 							end
 							else if (instr[14-:3] == 3'b100) begin
+								invalidEnc = 0;
 								uop[15-:6] = 6'd33;
 								uop[9-:2] = 2'd0;
 							end
 							else if (instr[14-:3] == 3'b101) begin
+								invalidEnc = 0;
 								uop[15-:6] = 6'd34;
 								uop[9-:2] = 2'd0;
 							end

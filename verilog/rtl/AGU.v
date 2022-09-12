@@ -11,21 +11,21 @@ module AGU (
 	input wire rst;
 	input wire en;
 	input wire [51:0] IN_branch;
-	input wire [83:0] IN_mapping;
+	input wire [335:0] IN_mapping;
 	input wire [170:0] IN_uop;
 	output reg [136:0] OUT_uop;
 	integer i;
 	wire [31:0] addr = IN_uop[170-:32] + {20'b00000000000000000000, IN_uop[54:43]};
-	reg [1:0] mapping;
+	reg [3:0] mapping;
 	reg mappingValid;
 	reg mappingExcept;
 	always @(*) begin
 		mappingValid = 0;
 		mapping = 0;
-		for (i = 0; i < 4; i = i + 1)
+		for (i = 0; i < 16; i = i + 1)
 			if (addr[31:11] == IN_mapping[i * 21+:21]) begin
 				mappingValid = 1;
-				mapping = i[1:0];
+				mapping = i[3:0];
 			end
 	end
 	always @(posedge clk)
@@ -40,7 +40,7 @@ module AGU (
 				OUT_uop[136-:32] <= addr;
 			end
 			else
-				OUT_uop[136-:32] <= {19'b0000000000000000000, mapping, addr[10:0]};
+				OUT_uop[136-:32] <= {17'b00000000000000000, mapping, addr[10:0]};
 			OUT_uop[62-:32] <= IN_uop[106-:32];
 			OUT_uop[30-:6] <= IN_uop[36-:6];
 			OUT_uop[24-:5] <= IN_uop[30-:5];
