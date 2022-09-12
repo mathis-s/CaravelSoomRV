@@ -48,7 +48,7 @@ module soomrv #(
     
     input wire user_clock2,
     
-    output wire[11:0] mem_addr,
+    output wire[12:0] mem_addr,
     output wire[31:0] mem_dataOut,
     input wire[31:0] mem_dataIn,
     output wire[3:0] mem_wm,
@@ -111,7 +111,7 @@ module soomrv #(
     reg MGMT_sramWE;
     reg MGMT_sramCE;
 
-    assign mem_addr = !usingDataRAM ? CORE_sramAddr[11:0] : MGMT_sramAddr[11:0];
+    assign mem_addr = !usingDataRAM ? CORE_sramAddr[12:0] : MGMT_sramAddr[12:0];
     assign mem_dataOut = !usingDataRAM ? CORE_sramData : MGMT_sramData;
     assign mem_wm = !usingDataRAM ? CORE_sramWM : MGMT_sramWM;
     assign mem_we = !usingDataRAM ? CORE_sramWE : MGMT_sramWE;

@@ -82,36 +82,36 @@ module BranchPredictor (
 		end
 		else if (IN_branchValid) begin
 			if (IN_branchTaken && (IN_branchID == ((1 << ID_BITS) - 1))) begin
-				entries[insertIndex[5:0]][76] <= 1;
-				entries[insertIndex[5:0]][75] <= 1;
-				entries[insertIndex[5:0]][74-:32] <= IN_branchAddr;
-				entries[insertIndex[5:0]][42-:32] <= IN_branchDest;
-				entries[insertIndex[5:0]][10] <= IN_branchIsJump;
-				entries[insertIndex[5:0]][0+:2] <= {IN_branchTaken, IN_branchTaken};
-				entries[insertIndex[5:0]][2+:2] <= {IN_branchTaken, IN_branchTaken};
-				entries[insertIndex[5:0]][4+:2] <= {IN_branchTaken, IN_branchTaken};
-				entries[insertIndex[5:0]][6+:2] <= {IN_branchTaken, IN_branchTaken};
-				entries[insertIndex[5:0]][9-:2] <= {IN_branchTaken, IN_branchTaken};
+				entries[insertIndex[4:0]][76] <= 1;
+				entries[insertIndex[4:0]][75] <= 1;
+				entries[insertIndex[4:0]][74-:32] <= IN_branchAddr;
+				entries[insertIndex[4:0]][42-:32] <= IN_branchDest;
+				entries[insertIndex[4:0]][10] <= IN_branchIsJump;
+				entries[insertIndex[4:0]][0+:2] <= {IN_branchTaken, IN_branchTaken};
+				entries[insertIndex[4:0]][2+:2] <= {IN_branchTaken, IN_branchTaken};
+				entries[insertIndex[4:0]][4+:2] <= {IN_branchTaken, IN_branchTaken};
+				entries[insertIndex[4:0]][6+:2] <= {IN_branchTaken, IN_branchTaken};
+				entries[insertIndex[4:0]][9-:2] <= {IN_branchTaken, IN_branchTaken};
 				insertIndex <= insertIndex + 1;
 			end
 		end
-		else if (entries[insertIndex[5:0]][76] && entries[insertIndex[5:0]][75]) begin
-			insertIndex[5:0] <= insertIndex[5:0] + 1;
-			entries[insertIndex[5:0]][75] <= 0;
+		else if (entries[insertIndex[4:0]][76] && entries[insertIndex[4:0]][75]) begin
+			insertIndex[4:0] <= insertIndex[4:0] + 1;
+			entries[insertIndex[4:0]][75] <= 0;
 		end
-		if (((IN_ROB_valid && IN_ROB_isBranch) && (IN_ROB_branchID != ((1 << ID_BITS) - 1))) && ({IN_ROB_branchAddr, 2'b00} == entries[IN_ROB_branchID[5:0]][74-:32])) begin : sv2v_autoblock_1
+		if (((IN_ROB_valid && IN_ROB_isBranch) && (IN_ROB_branchID != ((1 << ID_BITS) - 1))) && ({IN_ROB_branchAddr, 2'b00} == entries[IN_ROB_branchID[4:0]][74-:32])) begin : sv2v_autoblock_1
 			reg [1:0] hist;
-			hist = entries[IN_ROB_branchID[5:0]][9-:2];
-			entries[IN_ROB_branchID[5:0]][9-:2] <= {hist[0], IN_ROB_branchTaken};
-			OUT_CSR_branchCommitted <= !entries[IN_ROB_branchID[5:0]][10];
+			hist = entries[IN_ROB_branchID[4:0]][9-:2];
+			entries[IN_ROB_branchID[4:0]][9-:2] <= {hist[0], IN_ROB_branchTaken};
+			OUT_CSR_branchCommitted <= !entries[IN_ROB_branchID[4:0]][10];
 			if (IN_ROB_branchTaken) begin
-				if (entries[IN_ROB_branchID[5:0]][0 + (hist * 2)+:2] != 2'b11)
-					entries[IN_ROB_branchID[5:0]][0 + (hist * 2)+:2] <= entries[IN_ROB_branchID[5:0]][0 + (hist * 2)+:2] + 1;
+				if (entries[IN_ROB_branchID[4:0]][0 + (hist * 2)+:2] != 2'b11)
+					entries[IN_ROB_branchID[4:0]][0 + (hist * 2)+:2] <= entries[IN_ROB_branchID[4:0]][0 + (hist * 2)+:2] + 1;
 			end
-			else if (entries[IN_ROB_branchID[5:0]][0 + (hist * 2)+:2] != 2'b00)
-				entries[IN_ROB_branchID[5:0]][0 + (hist * 2)+:2] <= entries[IN_ROB_branchID[5:0]][0 + (hist * 2)+:2] - 1;
+			else if (entries[IN_ROB_branchID[4:0]][0 + (hist * 2)+:2] != 2'b00)
+				entries[IN_ROB_branchID[4:0]][0 + (hist * 2)+:2] <= entries[IN_ROB_branchID[4:0]][0 + (hist * 2)+:2] - 1;
 		end
 		if ((!rst && IN_pcValid) && OUT_branchTaken)
-			entries[OUT_branchID[5:0]][75] <= 1;
+			entries[OUT_branchID[4:0]][75] <= 1;
 	end
 endmodule

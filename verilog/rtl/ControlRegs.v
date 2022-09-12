@@ -52,7 +52,7 @@ module ControlRegs (
 	output reg OUT_SPI_clk;
 	output reg OUT_SPI_mosi;
 	input wire IN_SPI_miso;
-	output wire [335:0] OUT_AGU_mapping;
+	output wire [183:0] OUT_AGU_mapping;
 	output wire OUT_IO_busy;
 	integer i;
 	reg ceReg;
@@ -62,28 +62,20 @@ module ControlRegs (
 	reg [31:0] dataReg;
 	reg [63:0] cRegs64 [5:0];
 	reg [7:0] gpioCnt;
-	reg [31:0] cRegs [23:0];
+	reg [31:0] cRegs [15:0];
 	always @(*) begin
 		OUT_GPIO_oe = cRegs[5][15:0];
 		OUT_GPIO = cRegs[5][31:16];
 	end
 	assign OUT_irqAddr = cRegs[0];
-	assign OUT_AGU_mapping[0+:21] = cRegs[8][31:11];
-	assign OUT_AGU_mapping[21+:21] = cRegs[9][31:11];
-	assign OUT_AGU_mapping[42+:21] = cRegs[10][31:11];
-	assign OUT_AGU_mapping[63+:21] = cRegs[11][31:11];
-	assign OUT_AGU_mapping[84+:21] = cRegs[12][31:11];
-	assign OUT_AGU_mapping[105+:21] = cRegs[13][31:11];
-	assign OUT_AGU_mapping[126+:21] = cRegs[14][31:11];
-	assign OUT_AGU_mapping[147+:21] = cRegs[15][31:11];
-	assign OUT_AGU_mapping[168+:21] = cRegs[16][31:11];
-	assign OUT_AGU_mapping[189+:21] = cRegs[17][31:11];
-	assign OUT_AGU_mapping[210+:21] = cRegs[18][31:11];
-	assign OUT_AGU_mapping[231+:21] = cRegs[19][31:11];
-	assign OUT_AGU_mapping[252+:21] = cRegs[20][31:11];
-	assign OUT_AGU_mapping[273+:21] = cRegs[21][31:11];
-	assign OUT_AGU_mapping[294+:21] = cRegs[22][31:11];
-	assign OUT_AGU_mapping[315+:21] = cRegs[23][31:11];
+	assign OUT_AGU_mapping[0+:23] = cRegs[8][31:9];
+	assign OUT_AGU_mapping[23+:23] = cRegs[9][31:9];
+	assign OUT_AGU_mapping[46+:23] = cRegs[10][31:9];
+	assign OUT_AGU_mapping[69+:23] = cRegs[11][31:9];
+	assign OUT_AGU_mapping[92+:23] = cRegs[12][31:9];
+	assign OUT_AGU_mapping[115+:23] = cRegs[13][31:9];
+	assign OUT_AGU_mapping[138+:23] = cRegs[14][31:9];
+	assign OUT_AGU_mapping[161+:23] = cRegs[15][31:9];
 	reg [5:0] spiCnt;
 	assign OUT_IO_busy = (spiCnt != 0) || (gpioCnt != 0);
 	always @(posedge clk)
@@ -94,8 +86,8 @@ module ControlRegs (
 				cRegs64[i] <= 0;
 			for (i = 0; i < 8; i = i + 1)
 				cRegs[i] <= 0;
-			for (i = 0; i < 16; i = i + 1)
-				cRegs[i + 8] <= i << 11;
+			for (i = 0; i < 8; i = i + 1)
+				cRegs[i + 8] <= i << 9;
 			OUT_SPI_clk <= 0;
 			spiCnt <= 0;
 		end
@@ -115,16 +107,16 @@ module ControlRegs (
 						;
 					else begin
 						if (wmReg[0])
-							cRegs[addrReg[4:0]][7:0] <= dataReg[7:0];
+							cRegs[addrReg[3:0]][7:0] <= dataReg[7:0];
 						if (wmReg[1])
-							cRegs[addrReg[4:0]][15:8] <= dataReg[15:8];
+							cRegs[addrReg[3:0]][15:8] <= dataReg[15:8];
 						if (wmReg[2])
-							cRegs[addrReg[4:0]][23:16] <= dataReg[23:16];
+							cRegs[addrReg[3:0]][23:16] <= dataReg[23:16];
 						if (wmReg[3])
-							cRegs[addrReg[4:0]][31:24] <= dataReg[31:24];
-						if (addrReg[4:0] == 5'd5)
+							cRegs[addrReg[3:0]][31:24] <= dataReg[31:24];
+						if (addrReg[3:0] == 4'd5)
 							gpioCnt <= cRegs[6][7:0];
-						if (addrReg[4:0] == 5'd4) begin
+						if (addrReg[3:0] == 4'd4) begin
 							case (wmReg)
 								4'b1111: spiCnt <= 32;
 								4'b1100: spiCnt <= 16;
@@ -142,10 +134,10 @@ module ControlRegs (
 					else
 						OUT_data <= cRegs64[addrReg[3:1]][31:0];
 				end
-				else if (addrReg[4:0] == 5'd7)
+				else if (addrReg[3:0] == 4'd7)
 					OUT_data <= {16'bxxxxxxxxxxxxxxxx, IN_GPIO};
 				else
-					OUT_data <= cRegs[addrReg[4:0]];
+					OUT_data <= cRegs[addrReg[3:0]];
 			if (gpioCnt == 0)
 				cRegs[5][31:24] <= (cRegs[5][31:24] | cRegs[6][15:8]) & ~cRegs[6][23:16];
 			else

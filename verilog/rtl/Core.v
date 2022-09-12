@@ -391,7 +391,7 @@ module Core (
 	);
 	assign wbUOp[0+:92] = (INT0_uop[0] ? INT0_uop : DIV_uop);
 	wire [136:0] AGU_uop;
-	wire [335:0] AGU_mapping;
+	wire [183:0] AGU_mapping;
 	AGU agu(
 		.clk(clk),
 		.rst(rst),
