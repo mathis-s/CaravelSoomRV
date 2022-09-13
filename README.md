@@ -20,3 +20,13 @@ and also supports speculative execution and precise exceptions.
 ## Repo
 The Verilog source files can be found in `verilog/rtl`. These are converted from SystemVerilog via zachjs' [sv2v](https://github.com/zachjs/sv2v),
 the original SystemVerilog source code is available [here](https://github.com/git-mathis/SoomRV).
+
+## Testing
+The Repo includes two test to verify SoomRV's integration into Caravel.
+1. `core`: Mangagment SoC uploads & runs a naive `strlen` on SoomRV, and checks the result. Tests Wishbone interface SoomRV's SRAM and control registers.
+2. `spi_gpio`: Uploads and runs a "Hello World" program on SoomRV to test GPIO integration and SoomRV's SPI.
+
+Exhaustive tests of the core itself run using Verilator can be found in the [SoomRV repo](https://github.com/git-mathis/SoomRV).
+
+## Die Image
+![Screenshot from 2022-09-12 21-46-33](https://user-images.githubusercontent.com/39701487/189902810-aaabe4e6-5821-43af-9e09-a8cd39d7afd1.png)
